@@ -10,7 +10,7 @@ gulp.task('live-server', function() {
 	server.start();
 })
 
-gulp.task('bundle', function() {
+gulp.task('bundle', ['copy'], function() {
   return browserify({
   	entries:'app/main.jsx',
   	debug:true,
@@ -20,10 +20,19 @@ gulp.task('bundle', function() {
   .bundle()
   .pipe(source('app.js'))
   .pipe(gulp.dest('./.tmp'));		
+  /** A new folder appear */
+})
+
+gulp.task('copy', function(){
+	gulp.src(['app/*.css'])
+	.pipe(gulp.dest('./.tmp'));
+
+  gulp.src(['bower_components/**'])
+    .pipe(gulp.dest('./.tmp/bower_components'));
 })
 
 /** live-server is dependant, needs to run first */
-gulp.task('serve', ['live-server'], function() {
+gulp.task('serve', ['bundle', 'live-server'], function() {
   browserSync.init(null, {
   	proxy: "http://localhost:7777",
   	port: 9001
